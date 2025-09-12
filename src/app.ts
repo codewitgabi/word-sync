@@ -7,13 +7,13 @@ import {
 } from "./middlewares/errors.middleware";
 import { createServer } from "http";
 import { Server } from "socket.io";
-import mongoose from "mongoose";
 import cors from "cors";
 import { SuccessResponse } from "./utils/responses";
 import { StatusCodes } from "http-status-codes";
 import compression from "compression";
 import sysLogger from "./utils/logger";
 import { PORT } from "./utils/constants";
+import authRouter from "./routes/auth.route";
 
 const app: Express = express();
 
@@ -45,6 +45,8 @@ app.use(compression());
 // io.use(SocketAuthenticationMiddleware);
 
 // Routes
+
+app.use("/api/v1/auth", authRouter);
 
 // Metrics endpoint
 
