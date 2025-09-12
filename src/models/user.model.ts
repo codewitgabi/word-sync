@@ -8,6 +8,7 @@ export interface IUserDocument extends Document {
   checkPassword(password: string): boolean;
   createdAt: Date;
   updatedAt: Date;
+  documents: mongoose.Types.ObjectId[];
 }
 
 const UserSchema: Schema<IUserDocument> = new Schema(
@@ -40,6 +41,7 @@ const UserSchema: Schema<IUserDocument> = new Schema(
       required: true,
       unique: true,
     },
+    documents: [{ type: Schema.Types.ObjectId, ref: "Document" }],
   },
   { timestamps: true, versionKey: false, toObject: { useProjection: true } }
 );
