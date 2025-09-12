@@ -18,7 +18,10 @@ import documentRouter from "./routes/document.route";
 
 const app: Express = express();
 
-const corsOrigin = ["http://localhost:3000"];
+const corsOrigin = [
+  "http://localhost:3000",
+  "https://wordsync-test.vercel.app",
+];
 
 const server = createServer(app);
 const io = new Server(server, {
