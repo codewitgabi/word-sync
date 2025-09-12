@@ -30,12 +30,6 @@ const SocketAuthenticationMiddleware = (
     const accessToken =
       socket.handshake?.auth?.accessToken ||
       socket.handshake?.headers?.authorization;
-    let fcmToken: string | Array<string> =
-      socket.handshake.query?.fcmToken ?? "";
-
-    if (Array.isArray(fcmToken)) {
-      fcmToken = fcmToken[0];
-    }
 
     jwt.verify(
       accessToken,
@@ -60,7 +54,6 @@ const SocketAuthenticationMiddleware = (
 
         const user = await User.findById(id);
 
-
         if (!user) {
           sysLogger.error(`Socket auth error: Invalid credentials`);
           next(new UnauthorizedError("Invalid credentials"));
@@ -70,7 +63,6 @@ const SocketAuthenticationMiddleware = (
         sysLogger.info("Socket auth success for user: " + user._id);
 
         socket.user = user;
-        socket.fcmToken = fcmToken;
         next();
       }
     );

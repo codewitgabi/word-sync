@@ -7,7 +7,6 @@ import { IUserDocument } from "../models/user.model";
 
 export type TExtendedSocket = {
   user?: IUser;
-  fcmToken?: string;
 } & Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>;
 
 export type IUser = Document<unknown, {}, IUserDocument> &
@@ -20,5 +19,8 @@ export interface IActiveUser {
   id: string;
   user: IUser;
   socketId: string;
-  fcmToken: string;
+}
+
+export interface DocumentActiveUsers {
+  [index: string]: Array<IActiveUser>;
 }
