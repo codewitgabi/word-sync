@@ -5,6 +5,7 @@ export interface IUserDocument extends Document {
   username: string;
   password: string;
   email: string;
+  checkPassword(password: string): boolean;
   createdAt: Date;
   updatedAt: Date;
 }

@@ -50,6 +50,40 @@ class AuthService {
     });
   }
 
+  async login({ email, password }: Omit<IAuthUser, "username">) {
+    /**
+     * Authenticate user
+     */
+
+    const user = await User.findOne({ email }).select("+password");
+    if (!user || !user.checkPassword(password)) {
+      sysLogger.error("Invalid email or password");
+      throw new BadRequestError("Invalid email or password");
+    }
+
+    sysLogger.info("Generating access token");
+
+    const accessToken = await this.generateAccessToken({
+      id: (user._id as string).toString(),
+      email: user.email,
+    });
+    sysLogger.info("Access token generated successfully");
+
+    // Return success response
+
+    return SuccessResponse({
+      status: "success",
+      message: "User logged in successfully",
+      data: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        accessToken,
+      },
+      httpStatus: StatusCodes.OK,
+    });
+  }
+
   async generateAccessToken({
     id,
     email,
