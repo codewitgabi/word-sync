@@ -22,3 +22,10 @@ export const createDocument = catchAsync(
     res.status(response.httpStatus).json(response);
   }
 );
+
+export const getUserDocuments = catchAsync(
+  async (req: Request, res: Response) => {
+    const response = await documentService.getUserDocuments(req.user!);
+    res.status(response.httpStatus).json(response);
+  }
+);

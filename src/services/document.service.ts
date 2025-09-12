@@ -15,7 +15,7 @@ class DocumentService {
      * Create document for user
      */
 
-    const newDoc = await Document.create({ title, owner: user._id });
+    const newDoc = await Document.create({ title, user: user._id });
     user.documents.push(newDoc._id);
     await user.save();
 
@@ -24,6 +24,23 @@ class DocumentService {
       message: "Document created successfully",
       data: newDoc,
       httpStatus: StatusCodes.CREATED,
+    });
+  }
+
+  async getUserDocuments(user: IUserDocument) {
+    /**
+     * Fetch all documents for a user
+     */
+
+    const documents = await Document.find({ user: user._id }).sort({
+      createdAt: -1,
+    });
+
+    return SuccessResponse({
+      status: "success",
+      message: "Documents fetched successfully",
+      data: documents,
+      httpStatus: StatusCodes.OK,
     });
   }
 }
