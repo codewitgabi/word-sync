@@ -2,6 +2,8 @@ import { IUserDocument } from "../models/user.model";
 import Document from "../models/document.model";
 import { SuccessResponse } from "../utils/responses";
 import { StatusCodes } from "http-status-codes";
+import { NotFoundError } from "../utils/api-errors";
+import sysLogger from "../utils/logger";
 
 class DocumentService {
   async createDocument({
@@ -40,6 +42,35 @@ class DocumentService {
       status: "success",
       message: "Documents fetched successfully",
       data: documents,
+      httpStatus: StatusCodes.OK,
+    });
+  }
+
+  async deleteDocument(id: string, user: IUserDocument) {
+    /**
+     * Delete a document by ID
+     */
+
+    const doc = await Document.findById({ _id: id, user: user._id });
+    if (!doc) {
+      sysLogger.error(`Document with ID ${id} not found for user ${user._id}`);
+      throw new NotFoundError("Document not found");
+    }
+
+    await doc.deleteOne();
+
+    // Remove document reference from user's documents array
+
+    user.documents = user.documents.filter(
+      (documentId: any) => !documentId.equals(doc._id)
+    );
+    await user.save();
+
+    sysLogger.info(`Document with ID ${id} deleted for user ${user._id}`);
+
+    return SuccessResponse({
+      status: "success",
+      message: "Document deleted successfully",
       httpStatus: StatusCodes.OK,
     });
   }

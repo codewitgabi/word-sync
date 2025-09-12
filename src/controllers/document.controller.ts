@@ -29,3 +29,14 @@ export const getUserDocuments = catchAsync(
     res.status(response.httpStatus).json(response);
   }
 );
+
+export const deleteDocument = catchAsync(
+  async (req: Request, res: Response) => {
+    const documentId = req.params.id;
+    const response = await documentService.deleteDocument(
+      documentId,
+      req.user!
+    );
+    res.status(response.httpStatus).json(response);
+  }
+);
