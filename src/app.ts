@@ -16,8 +16,12 @@ import { PORT } from "./utils/constants";
 import authRouter from "./routes/auth.route";
 import documentRouter from "./routes/document.route";
 import SocketAuthenticationMiddleware from "./middlewares/socket.middleware";
-import { IUser, TExtendedSocket } from "./types/socket.types";
-import { onEnterDocument, onExitDocument } from "./utils/socket-events-handler";
+import { IUser, TExtendedSocket, TMousePosition } from "./types/socket.types";
+import {
+  onEnterDocument,
+  onExitDocument,
+  onMousePositionChange,
+} from "./utils/socket-events-handler";
 
 const app: Express = express();
 
@@ -65,6 +69,13 @@ io.on("connection", (socket: TExtendedSocket) => {
   socket.on("exit_document", (documentId: string) => {
     onExitDocument(socket, documentId, user);
   });
+
+  socket.on(
+    "mouse_position_change",
+    (documentId: string, mousePosition: TMousePosition) => {
+      onMousePositionChange(socket, documentId, user, mousePosition);
+    }
+  );
 });
 
 // Routes

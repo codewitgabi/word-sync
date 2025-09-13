@@ -24,3 +24,8 @@ export interface IActiveUser {
 export interface DocumentActiveUsers {
   [index: string]: Array<IActiveUser>;
 }
+
+export type TMousePosition = {
+  posX: number;
+  posY: number;
+};

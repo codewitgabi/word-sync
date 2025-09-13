@@ -3,6 +3,7 @@ import type {
   DocumentActiveUsers,
   IUser,
   TExtendedSocket,
+  TMousePosition,
 } from "../types/socket.types";
 import sysLogger from "./logger";
 
@@ -52,7 +53,6 @@ export const onExitDocument = (
   if (documentId in ACTIVE_DOCUMENTS) {
     const activeUsers = ACTIVE_DOCUMENTS[documentId];
     const filteredActiveUsers = activeUsers.filter(({ id }) => id !== user.id);
-    console.log({ filteredActiveUsers });
     ACTIVE_DOCUMENTS[documentId] = [...filteredActiveUsers];
   }
 
@@ -60,4 +60,16 @@ export const onExitDocument = (
   socket.to(documentId).emit("active_users", ACTIVE_DOCUMENTS[documentId]);
   socket.leave(documentId);
   sysLogger.info(`User ${user.id} left document ${documentId}`);
+};
+
+export const onMousePositionChange = (
+  socket: TExtendedSocket,
+  documentId: string,
+  user: IUser,
+  mousePosition: TMousePosition
+) => {
+  socket.to(documentId).emit("mouse_position_change", {
+    id: user.id,
+    mousePosition,
+  });
 };
