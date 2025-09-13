@@ -17,8 +17,7 @@ import authRouter from "./routes/auth.route";
 import documentRouter from "./routes/document.route";
 import SocketAuthenticationMiddleware from "./middlewares/socket.middleware";
 import { IUser, TExtendedSocket } from "./types/socket.types";
-import { ObjectId } from "mongoose";
-import { onEnterDocument } from "./utils/socket-events-handler";
+import { onEnterDocument, onExitDocument } from "./utils/socket-events-handler";
 
 const app: Express = express();
 
@@ -56,14 +55,15 @@ io.on("connection", (socket: TExtendedSocket) => {
   sysLogger.info(`User connected: ${socket.id}`);
 
   const user = socket.user as IUser;
-  const userId = user._id as ObjectId;
-  const userIdStr = String(userId);
-  const SOCKET_ID = socket.id;
 
   // Join room
 
   socket.on("enter_document", (documentId: string) => {
-    onEnterDocument(socket, documentId, user);
+    onEnterDocument(io, socket, documentId, user);
+  });
+
+  socket.on("exit_document", (documentId: string) => {
+    onExitDocument(socket, documentId, user);
   });
 });
 

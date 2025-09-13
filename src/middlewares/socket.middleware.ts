@@ -52,7 +52,7 @@ const SocketAuthenticationMiddleware = (
 
         // Get user with given _id
 
-        const user = await User.findById(id);
+        const user = await User.findById(id).select("_id username");
 
         if (!user) {
           sysLogger.error(`Socket auth error: Invalid credentials`);
