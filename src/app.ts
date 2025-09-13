@@ -22,6 +22,8 @@ import {
   onExitDocument,
   onMousePositionChange,
 } from "./utils/socket-events-handler";
+import socketStream from "./lib/socket-stream";
+import { sharedbBackend } from "./config/sharedb.config";
 
 const app: Express = express();
 
@@ -76,6 +78,9 @@ io.on("connection", (socket: TExtendedSocket) => {
       onMousePositionChange(socket, documentId, user, mousePosition);
     }
   );
+
+  const stream = socketStream(socket);
+  sharedbBackend.listen(stream);
 });
 
 // Routes

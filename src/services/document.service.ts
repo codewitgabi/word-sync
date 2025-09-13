@@ -4,6 +4,7 @@ import { SuccessResponse } from "../utils/responses";
 import { StatusCodes } from "http-status-codes";
 import { NotFoundError } from "../utils/api-errors";
 import sysLogger from "../utils/logger";
+import { sharedbBackend } from "../config/sharedb.config";
 
 class DocumentService {
   async createDocument({
@@ -18,6 +19,22 @@ class DocumentService {
      */
 
     const newDoc = await Document.create({ title, user: user._id });
+
+    // 2. Create corresponding ShareDB doc
+    const connection = sharedbBackend.connect();
+    const doc = connection.get("documents", newDoc._id.toString());
+
+    await new Promise((resolve, reject) => {
+      doc.fetch((err) => {
+        if (err) return reject(err);
+        if (doc.type === null) {
+          doc.create({ content: "" }, "json0", resolve);
+        } else {
+          resolve(undefined);
+        }
+      });
+    });
+
     user.documents.push(newDoc._id);
     await user.save();
 
